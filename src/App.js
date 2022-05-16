@@ -9,6 +9,7 @@ import {
 	doc,
 	deleteDoc,
 } from "firebase/firestore";
+import LogIn from "./LogIn";
 
 function App() {
 	const [users, setUsers] = useState([]);
@@ -42,8 +43,8 @@ function App() {
 	const deleteUser = async (id) => {
 		const userDoc = doc(db, "users", id);
 		await deleteDoc(userDoc);
-  };
-  
+	};
+
 	return (
 		<div className="App" style={{ padding: 10 }}>
 			<div className="user-form" style={{ display: "block" }}>
@@ -78,6 +79,7 @@ function App() {
 					</div>
 				);
 			})}
+			<LogIn />
 		</div>
 	);
 }
