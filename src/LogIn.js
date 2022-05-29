@@ -1,4 +1,9 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+	createUserWithEmailAndPassword,
+	onAuthStateChanged,
+	signInWithEmailAndPassword,
+	signOut,
+} from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
 import { auth, db } from "./firebase-config";
@@ -8,6 +13,11 @@ const LogIn = () => {
 	const [registerPassword, setRegisterPssword] = useState("");
 	const [loginEmail, setLoginEmail] = useState("");
 	const [loginPassword, setLoginPassword] = useState("");
+	const [user, setUser] = useState({});
+
+	onAuthStateChanged(auth, (currentUser) => {
+		setUser(currentUser);
+	});
 
 	const register = async () => {
 		try {
@@ -16,20 +26,39 @@ const LogIn = () => {
 				registerEmail,
 				registerPassword
 			);
-			const user = userCredential.user;
-			await addDoc(collection(db, "user"), {
-				uid: user.uid,
-				email: user.email,
-			});
-			console.log("saved");
+			// const user = userCredential.user;
+			// await addDoc(collection(db, "user"), {
+			// 	uid: user.uid,
+			// 	email: user.email,
+			// });
+			// console.log(userCredential);
 		} catch (err) {
 			console.log(err.message);
 		}
 	};
 
-	// const logIn = () => {};
+	const logIn = async () => {
+		try {
+			const userCredential = await signInWithEmailAndPassword(
+				auth,
+				loginEmail,
+				loginPassword
+			);
+			// const user = userCredential.user;
+			// await addDoc(collection(db, "user"), {
+			// 	uid: user.uid,
+			// 	email: user.email,
+			// });
+			// console.log(userCredential);
+		} catch (err) {
+			console.log(err.message);
+		}
+	};
 
-	// const logOut = () => {};
+	const logOut = async () => {
+		await signOut(auth);
+	};
+
 	return (
 		<div className="container">
 			<div className="register">
@@ -56,16 +85,20 @@ const LogIn = () => {
 					type="text"
 					placeholder="Email..."
 					style={{ marginRight: 10, paddingBlock: 5 }}
+					value={loginEmail}
+					onChange={(e) => setLoginEmail(e.target.value)}
 				/>
 				<input
 					type="password"
 					placeholder="Password..."
 					style={{ marginRight: 10, paddingBlock: 5 }}
+					value={loginPassword}
+					onChange={(e) => setLoginPassword(e.target.value)}
 				/>
-				<button>Log In</button>
+				<button onClick={logIn}>Log In</button>
 			</div>
-			<h4>User Logged In: </h4>
-			<button>Sign Out</button>
+			<h4>User Logged In: {user?.email} </h4>
+			<button onClick={logOut}>Sign Out</button>
 		</div>
 	);
 };

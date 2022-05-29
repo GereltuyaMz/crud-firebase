@@ -21,7 +21,7 @@ function App() {
 		const getUsers = async () => {
 			//handle promise
 			const data = await getDocs(usersCollectionRef);
-			console.log("firebase collection => ", data);
+			// console.log("firebase collection => ", data);
 			// add id in the object using spread operator
 			setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 		};
